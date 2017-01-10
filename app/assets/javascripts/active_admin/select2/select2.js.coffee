@@ -7,7 +7,7 @@ initSelect2 = (inputs, extra = {}) ->
   inputs.each ->
     item = $(this)
 
-    models = undefined;
+    models = item.data("select2")
     for prop of models
       select_data.push
         id: models[prop]
