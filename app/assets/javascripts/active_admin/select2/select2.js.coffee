@@ -7,13 +7,20 @@ initSelect2 = (inputs, extra = {}) ->
   inputs.each ->
     item = $(this)
 
-    models = item.data('select2')
+    models = undefined;
     for prop of models
       select_data.push
         id: models[prop]
         text: models[prop]
 
-    origin_data = models
+    if !select_data.length
+      select_data.push
+        id: " "
+        text: " "
+
+    if(models)
+      origin_data = models
+
     # reading from data allows
     options = $.extend(
       allowClear: true,
@@ -43,7 +50,7 @@ initSelect2 = (inputs, extra = {}) ->
           note = container.children()[i]
           break
         i++
-      if(!origin_data[e.val])
+      if(e.val && !origin_data[e.val] && e.val.trim())
         $(note).addClass('has-warning')
       else
         $(note).removeClass('has-warning')
