@@ -1,7 +1,7 @@
 'use strict';
 
 select_data = []
-origin_data = {}
+origin_data = []
 
 initSelect2 = (inputs, extra = {}) ->
   inputs.each ->
@@ -50,13 +50,26 @@ initSelect2 = (inputs, extra = {}) ->
           note = container.children()[i]
           break
         i++
-      if(e.val && !origin_data[e.val] && e.val.trim())
-        $(note).addClass('has-warning')
+
+      if(e.val && e.val.trim() && contain(origin_data, e.val.trim()))
+          $(note).addClass('has-warning')
       else
         $(note).removeClass('has-warning')
       return
 
     return
+
+contain = (array, elem) ->
+  i = 0
+  while i < array.length
+    if(array[i] == elem)
+      break
+    i++
+
+  if(i == origin_data.length)
+    return true
+
+  return false
 
 $(document).on 'has_many_add:after', '.has_many_container', (e, fieldset) ->
   initSelect2(fieldset.find('.select2-input'))
