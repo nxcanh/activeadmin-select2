@@ -1,6 +1,7 @@
 'use strict';
 
 select_data = []
+origin_data = {}
 
 initSelect2 = (inputs, extra = {}) ->
   inputs.each ->
@@ -12,6 +13,7 @@ initSelect2 = (inputs, extra = {}) ->
         id: models[prop]
         text: models[prop]
 
+    origin_data = models
     # reading from data allows
     options = $.extend(
       allowClear: true,
@@ -33,10 +35,21 @@ initSelect2 = (inputs, extra = {}) ->
     item.data('select2', null)
     item.select2(options)
 
-    item.on 'select2-selecting', (e) ->
-      console.log(e)
-      console.log(select_data)
+    item.on 'change', (e) ->
+      container = $(item.select2('container'))
+      i = 0
+      while i < container.children().length
+        if container.children()[i].className.indexOf('select2-choice') != -1
+          note = container.children()[i]
+          break
+        i++
+      if(!origin_data[e.val])
+        $(note).addClass('has-warning')
+      else
+        $(note).removeClass('has-warning')
       return
+
+    return
 
 $(document).on 'has_many_add:after', '.has_many_container', (e, fieldset) ->
   initSelect2(fieldset.find('.select2-input'))
