@@ -1,10 +1,15 @@
 'use strict';
 
-select_data = []
-origin_data = []
-
 initSelect2 = (inputs, extra = {}) ->
+  if !inputs[0]
+    return
+
+  isMultiple = inputs[0].multiple
+
   inputs.each ->
+    select_data = []
+    origin_data = []
+
     item = $(this)
 
     models = item.data("select2")
@@ -22,40 +27,50 @@ initSelect2 = (inputs, extra = {}) ->
       origin_data = models
 
     # reading from data allows
-    options = $.extend(
-      allowClear: true,
-      extra
-      createSearchChoice: (term, data) ->
-        if $(data).filter((->
-          @text.localeCompare(term) == 0
-        )).length == 0
-          return {
-            id: term
-            text: term
-          }
-        return
-      multiple: false
-      data: select_data
-    )
+    if isMultiple
+      options = $.extend(
+        allowClear: true,
+        extra
+        multiple: isMultiple
+        data: select_data
+      )
+    else
+      options = $.extend(
+        allowClear: true,
+        extra
+        createSearchChoice: (term, data) ->
+          if $(data).filter((->
+            @text.localeCompare(term) == 0
+          )).length == 0
+            return {
+              id: term
+              text: term
+            }
+          return
+        multiple: isMultiple
+        data: select_data
+      )
 
     # because select2 reads from input.data to check if it is select2 already
     item.data('select2', null)
     item.select2(options)
 
-    item.on 'change', (e) ->
-      container = $(item.select2('container'))
-      i = 0
-      while i < container.children().length
-        if container.children()[i].className.indexOf('select2-choice') != -1
-          note = container.children()[i]
-          break
-        i++
 
-      if(e.val && e.val.trim() && contain(origin_data, e.val.trim()))
-          $(note).addClass('has-warning')
-      else
-        $(note).removeClass('has-warning')
-      return
+    if !isMultiple
+      item.on 'change', (e) ->
+        container = $(item.select2('container'))
+        i = 0
+        while i < container.children().length
+          if container.children()[i].className.indexOf('select2-choice') != -1
+            note = container.children()[i]
+            break
+          i++
+
+        if(e.val && e.val.trim() && contain(origin_data, e.val.trim()))
+            $(note).addClass('has-warning')
+        else
+          $(note).removeClass('has-warning')
+        return
 
     return
 
@@ -66,7 +81,7 @@ contain = (array, elem) ->
       break
     i++
 
-  if(i == origin_data.length)
+  if(i == array.length)
     return true
 
   return false
