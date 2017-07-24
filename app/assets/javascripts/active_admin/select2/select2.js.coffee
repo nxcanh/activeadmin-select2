@@ -4,13 +4,14 @@ initSelect2 = (inputs, extra = {}) ->
   if !inputs[0]
     return
 
-  isMultiple = inputs[0].multiple
-
   inputs.each ->
     select_data = []
     origin_data = []
 
     item = $(this)
+
+    isMultiple = item[0].multiple
+    isLockColl = item.data("lockCollection")
 
     models = item.data("select2")
     for prop of models
@@ -27,7 +28,7 @@ initSelect2 = (inputs, extra = {}) ->
       origin_data = models
 
     # reading from data allows
-    if isMultiple
+    if isLockColl
       options = $.extend(
         allowClear: true,
         extra

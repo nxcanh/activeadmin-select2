@@ -6,7 +6,7 @@ module Formtastic
         {
             class: 'select2-input',
             type: 'text',
-            data: {select2: options[:collection]},
+            data: {select2: options[:collection], lock_collection: options[:lock_collection]},
             multiple: true,
             name: "#{object_name}[#{association_primary_key}]"
         }.merge(super)
