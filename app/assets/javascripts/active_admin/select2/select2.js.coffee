@@ -15,9 +15,24 @@ initSelect2 = (inputs, extra = {}) ->
 
     models = item.data("select2")
     for prop of models
-      select_data.push
-        id: models[prop]
-        text: models[prop]
+      model_item = models[prop]
+      object_type = Object.prototype.toString.call(model_item)
+      
+      if object_type == '[object String]'
+        select_data.push
+          id: model_item
+          text: model_item
+
+      if object_type == '[object Array]'
+        select_data.push
+          id: model_item[1]
+          text: model_item[0]
+
+      if object_type == '[object Object]'
+        select_data.push
+          id: model_item['id']
+          text: model_item['text']
+      
 
     if !select_data.length
       select_data.push
